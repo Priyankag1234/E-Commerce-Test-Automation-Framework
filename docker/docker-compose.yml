@@ -1,0 +1,135 @@
+version: "3.8"
+
+# ============================================================
+# Selenium Grid 4 — Hub + Multi-Browser Nodes
+# Usage:
+#   docker-compose up -d              (start the grid)
+#   docker-compose ps                 (verify health)
+#   docker-compose down               (stop all containers)
+#   docker-compose up -d --scale chrome-node=3   (scale chrome)
+#
+# Grid UI: http://localhost:4444/ui
+# ============================================================
+
+services:
+
+  # ─────────────────────────────────────────
+  # Selenium Grid Hub — Routes requests to Nodes
+  # ─────────────────────────────────────────
+  selenium-hub:
+    image: selenium/hub:4.26.0
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"   # Grid UI and WebDriver endpoint
+      - "4442:4442"   # Event bus publish port
+      - "4443:4443"   # Event bus subscribe port
+    environment:
+      - GRID_MAX_SESSION=16
+      - GRID_TIMEOUT=300
+      - GRID_BROWSER_TIMEOUT=300
+    healthcheck:
+      test: ["CMD", "curl", "-sSL", "http://localhost:4444/wd/hub/status"]
+      interval: 15s
+      timeout: 30s
+      retries: 5
+    networks:
+      - selenium-grid
+
+  # ─────────────────────────────────────────
+  # Chrome Node
+  # ─────────────────────────────────────────
+  chrome-node:
+    image: selenium/node-chrome:4.26.0
+    container_name: selenium-chrome-node
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=4
+      - SE_NODE_SESSION_TIMEOUT=300
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+      - SE_SCREEN_DEPTH=24
+      - JAVA_OPTS=-Xmx2g
+    shm_size: "2gb"   # Prevent Chrome from crashing due to shared memory limits
+    volumes:
+      - /dev/shm:/dev/shm
+    networks:
+      - selenium-grid
+
+  # ─────────────────────────────────────────
+  # Firefox Node
+  # ─────────────────────────────────────────
+  firefox-node:
+    image: selenium/node-firefox:4.26.0
+    container_name: selenium-firefox-node
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=4
+      - SE_NODE_SESSION_TIMEOUT=300
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+    shm_size: "2gb"
+    networks:
+      - selenium-grid
+
+  # ─────────────────────────────────────────
+  # Edge Node
+  # ─────────────────────────────────────────
+  edge-node:
+    image: selenium/node-edge:4.26.0
+    container_name: selenium-edge-node
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=4
+      - SE_NODE_SESSION_TIMEOUT=300
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+    shm_size: "2gb"
+    networks:
+      - selenium-grid
+
+  # ─────────────────────────────────────────
+  # Test Runner — Runs the Maven tests inside Docker
+  # Build: docker-compose build test-runner
+  # Run: docker-compose run --rm test-runner
+  # ─────────────────────────────────────────
+  test-runner:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: automation-test-runner
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      - ENV=qa
+      - BROWSER=chrome
+      - HEADLESS=true
+      - EXECUTION=remote
+      - GRID_URL=http://selenium-hub:4444
+    volumes:
+      - ../test-output:/app/test-output   # Mount report output to host
+      - ../logs:/app/logs                 # Mount log output to host
+    networks:
+      - selenium-grid
+    profiles:
+      - run-tests    # Only start when explicitly requested: docker-compose --profile run-tests up
+
+networks:
+  selenium-grid:
+    name: selenium-grid-network
+    driver: bridge

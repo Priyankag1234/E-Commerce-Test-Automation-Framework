@@ -1,0 +1,26 @@
+[
+  {
+    "username": "standard_user",
+    "password": "secret_sauce",
+    "role": "standard",
+    "description": "Standard user with full access to all features"
+  },
+  {
+    "username": "locked_out_user",
+    "password": "secret_sauce",
+    "role": "locked",
+    "description": "User who is locked out — login should fail with error"
+  },
+  {
+    "username": "problem_user",
+    "password": "secret_sauce",
+    "role": "problem",
+    "description": "User experiencing UI glitches — images may be broken"
+  },
+  {
+    "username": "performance_glitch_user",
+    "password": "secret_sauce",
+    "role": "glitch",
+    "description": "User experiencing slow performance — pages load slowly"
+  }
+]

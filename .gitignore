@@ -1,0 +1,40 @@
+﻿# Compiled class files
+target/
+*.class
+
+# Maven
+.mvn/
+!.mvn/wrapper/
+!.mvn/jvm.config
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.classpath
+*.project
+*.settings/
+
+# Logs
+logs/
+*.log
+
+# Test output & Reports
+test-output/
+screenshots/
+/reports/
+allure-results/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / Environment
+.env
+*.secret
+
+# Docker volumes
+docker/data/
+

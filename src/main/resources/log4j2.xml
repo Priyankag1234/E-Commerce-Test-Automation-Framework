@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <Properties>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="LOG_FILE">${LOG_DIR}/framework.log</Property>
+        <Property name="PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        <Property name="CONSOLE_PATTERN">%d{HH:mm:ss.SSS} [%highlight{%-5level}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=cyan, TRACE=blue}] [%t] %logger{20} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Console Appender with colour highlighting -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${CONSOLE_PATTERN}" disableAnsi="false"/>
+        </Console>
+
+        <!-- Rolling File Appender - rotates daily or at 10MB -->
+        <RollingFile name="FileAppender"
+                     fileName="${LOG_FILE}"
+                     filePattern="${LOG_DIR}/framework-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <!-- Async wrapper for high-performance logging -->
+        <Async name="AsyncFileAppender">
+            <AppenderRef ref="FileAppender"/>
+        </Async>
+
+    </Appenders>
+
+    <Loggers>
+        <!-- Framework loggers -->
+        <Logger name="com.ecommerce" level="DEBUG" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="AsyncFileAppender"/>
+        </Logger>
+
+        <!-- REST Assured HTTP logging -->
+        <Logger name="io.restassured" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="AsyncFileAppender"/>
+        </Logger>
+
+        <!-- Selenium / WebDriver -->
+        <Logger name="org.openqa.selenium" level="WARN" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="AsyncFileAppender"/>
+        </Logger>
+
+        <!-- WebDriverManager -->
+        <Logger name="io.github.bonigarcia" level="WARN" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+
+        <!-- Root logger -->
+        <Root level="INFO">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="AsyncFileAppender"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
