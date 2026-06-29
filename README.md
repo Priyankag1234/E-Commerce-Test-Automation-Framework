@@ -464,6 +464,3 @@ Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
-## License
-
-No license file is currently included. Add a `LICENSE` file before publishing publicly if you want others to reuse this project.
