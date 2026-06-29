@@ -392,7 +392,7 @@ The Jenkins pipeline demonstrates:
 - artifact archiving for reports and logs
 - Grid cleanup after pipeline completion
 
-## What A Technical Reviewer Should Inspect
+## Key Files To Review
 
 Good entry points for code review:
 
