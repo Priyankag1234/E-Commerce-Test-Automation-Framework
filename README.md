@@ -4,9 +4,6 @@ A Java-based hybrid test automation framework for validating an e-commerce appli
 
 This repository is designed as a portfolio-ready automation framework that a recruiter, hiring manager, or technical interviewer can inspect without needing a traditional frontend application.
 
-## Quick View For Recruiters
-
-This is not a frontend product. It is a test automation framework. The main things to review are the source code, test architecture, CI/CD setup, and generated test reports.
 
 Key proof points:
 
@@ -420,34 +417,12 @@ Commit source and configuration files:
 docker/
 src/
 .gitignore
-CONTRIBUTING.md
-GITHUB_UPLOAD_CHECKLIST.md
+
 Jenkinsfile
 pom.xml
 README.md
 ```
 
-Do not commit generated/local folders:
-
-```text
-.git/
-.github/modernize/
-target/
-logs/
-test-output/
-```
-
-## Suggested Resume Bullet
-
-```text
-Built a hybrid Java test automation framework using Selenium WebDriver, REST Assured, JUnit 5, Maven, and Docker Selenium Grid. Implemented Page Object Model, ThreadLocal WebDriver management, parallel execution, JSON schema validation, Extent HTML reporting, GitHub Actions, and Jenkins CI/CD pipelines for UI and API test coverage.
-```
-
-## Suggested LinkedIn Project Summary
-
-```text
-E-Commerce Test Automation Framework: A Java-based SDET portfolio project demonstrating UI automation, API automation, Page Object Model, REST Assured clients, JUnit 5 parallel execution, Docker Selenium Grid, Extent Reports, GitHub Actions, and Jenkins pipeline integration.
-```
 
 ## Current Verification
 
